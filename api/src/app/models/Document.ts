@@ -5,6 +5,7 @@ export const Document = model('Document', new Schema({
     type: String,
     maxlength: 100,
     required: true,
+    unique: true,
   },
   description: {
     type: String,
