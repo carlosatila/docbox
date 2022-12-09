@@ -17,6 +17,7 @@ export default function Breadcrumbs({ breadcrumbs }: BreadcrumbsProps) {
     <Breads
       separator={<NavigateNextIcon fontSize="small" />}
       aria-label="breadcrumb"
+      sx={{ mb: 3 }}
     >
       {breadcrumbs.map((b, index) => (
         <LinkStyled
