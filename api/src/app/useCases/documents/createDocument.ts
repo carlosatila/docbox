@@ -4,7 +4,7 @@ import { Document } from '../../models/Document';
 
 export async function createDocument(req: Request, res: Response) {
   try {
-    const imageSrc = req.file?.filename;
+    const fileSrc = req.file?.filename;
     const {
       title,
       description,
@@ -13,7 +13,7 @@ export async function createDocument(req: Request, res: Response) {
     const document = await Document.create({
       title,
       description,
-      imageSrc,
+      fileSrc,
     });
 
     return res.status(201).json(document);

@@ -12,7 +12,7 @@ export const Document = model('Document', new Schema({
     maxlength: 2000,
     required: true,
   },
-  imageSrc: {
+  fileSrc: {
     type: String,
     required: true,
   },

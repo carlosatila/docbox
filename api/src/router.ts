@@ -31,4 +31,4 @@ const upload = multer({
 });
 
 router.get('/documents', listDocuments);
-router.post('/documents', upload.single('image'), createDocument);
+router.post('/documents', upload.single('document'), createDocument);
