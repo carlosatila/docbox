@@ -21,8 +21,8 @@ export default function Documents() {
     { label: 'Meus Documento' },
   ];
 
-  const [selectedFile, setSelectedFile] = useState<string | null>('');
-  const [document, setDocument] = useState<DocumentRequestProps>({
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [documentFields, setDocumentFields] = useState<DocumentRequestProps>({
     title: '',
     description: '',
     document: ''
@@ -102,7 +102,7 @@ export default function Documents() {
                 onClose={() => console.log('')}
                 actions={
                   <>
-                    <Button variant='contained' color='success' onClick={() => addDocument(document)}>Cadastrar</Button>
+                    <Button variant='contained' color='success' onClick={() => addDocument(documentFields)}>Cadastrar</Button>
                     <Button variant='outlined' color='error' onClick={() => setOpenModal(false)}>Cancelar</Button>
                   </>
                 }
@@ -115,6 +115,7 @@ export default function Documents() {
                     label="Título"
                     fullWidth
                     required
+                    onChange={e => setDocumentFields({ ...documentFields, title: e.target.value })}
                   />
                   <TextField
                     autoFocus
@@ -123,6 +124,7 @@ export default function Documents() {
                     label="Descrição"
                     fullWidth
                     required
+                    onChange={e => setDocumentFields({ ...documentFields, description: e.target.value })}
                   />
                   <Box display='flex' alignItems='center'>
                     <Button
@@ -136,10 +138,12 @@ export default function Documents() {
                         hidden
                         accept="*"
                         type="file"
-                        onChange={event => setSelectedFile(event.target.files  && event.target.files[0].name)}
+                        onChange={e => setDocumentFields({
+                          ...documentFields, document: e.target.files && e.target.files[0]
+                        })}
                       />
                     </Button>
-                    <Typography variant='body1' sx={{ mt: 3 }}>{selectedFile}</Typography>
+                    <Typography variant='body1' sx={{ mt: 3 }}>{selectedFile?.name}</Typography>
                   </Box>
                 </Box>
               </Modal>
@@ -172,15 +176,23 @@ function useDocuments() {
   async function addDocument({
     title,
     description,
-    document
+    document,
   }: DocumentRequestProps) {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('document', document);
+
     try {
       setStatus('loading');
-      await api.post('/documents', {
-        title,
-        description,
-        document,
-      });
+
+      await api.post(
+        '/documents',
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        }
+      );
       await getData();
       setStatus('done');
     } catch (err) {

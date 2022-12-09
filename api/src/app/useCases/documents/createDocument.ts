@@ -4,6 +4,9 @@ import { Document } from '../../models/Document';
 
 export async function createDocument(req: Request, res: Response) {
   try {
+
+    console.log(req.body, req.file);
+
     const fileSrc = req.file?.filename;
     const {
       title,
