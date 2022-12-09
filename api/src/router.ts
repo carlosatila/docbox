@@ -4,9 +4,12 @@ import { Router } from 'express';
 import multer from 'multer';
 import mime from 'mime-types';
 
+import config from './config';
+
 import { createDocument } from './app/useCases/documents/createDocument';
 import { listDocuments } from './app/useCases/documents/listDocuments';
-import config from './config';
+import { updateDocument } from './app/useCases/documents/updateDocument';
+import { deleteDocument } from './app/useCases/documents/deleteDocument';
 
 export const router = Router();
 
@@ -32,3 +35,5 @@ const upload = multer({
 
 router.get('/documents', listDocuments);
 router.post('/documents', upload.single('document'), createDocument);
+router.put('/documents/:documentId', updateDocument);
+router.delete('/documents/:documentId', deleteDocument);
