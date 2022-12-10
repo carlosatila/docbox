@@ -14,13 +14,9 @@ yarn #or npm install
 ```bash
 mv .env.example .env
 ```
-### Start database
+### Start DB and APP
 ```bash
 docker-compose up --buld
-```
-### Run application
-```bash
-yarn dev
 ```
 
 ---
