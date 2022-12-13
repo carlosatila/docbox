@@ -21,11 +21,10 @@ export default function Documents() {
     { label: 'Meus Documento' },
   ];
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentFields, setDocumentFields] = useState<DocumentRequestProps>({
     title: '',
     description: '',
-    document: ''
+    document: null,
   });
   const [openModal, setOpenModal] = useState<boolean>(false);
   const {
@@ -102,7 +101,21 @@ export default function Documents() {
                 onClose={() => console.log('')}
                 actions={
                   <>
-                    <Button variant='contained' color='success' onClick={() => addDocument(documentFields)}>Cadastrar</Button>
+                    <Button
+                      variant='contained'
+                      color='success'
+                      onClick={() => {
+                        addDocument(documentFields);
+                        setDocumentFields({
+                          title: '',
+                          description: '',
+                          document: null,
+                        });
+                        setOpenModal(false);
+                      }}
+                    >
+                      Cadastrar
+                    </Button>
                     <Button variant='outlined' color='error' onClick={() => setOpenModal(false)}>Cancelar</Button>
                   </>
                 }
@@ -113,6 +126,7 @@ export default function Documents() {
                     margin="dense"
                     variant="standard"
                     label="Título"
+                    value={documentFields.title}
                     fullWidth
                     required
                     onChange={e => setDocumentFields({ ...documentFields, title: e.target.value })}
@@ -122,6 +136,7 @@ export default function Documents() {
                     margin="dense"
                     variant="standard"
                     label="Descrição"
+                    value={documentFields.description}
                     fullWidth
                     required
                     onChange={e => setDocumentFields({ ...documentFields, description: e.target.value })}
@@ -138,12 +153,14 @@ export default function Documents() {
                         hidden
                         accept="*"
                         type="file"
+                        required
                         onChange={e => setDocumentFields({
-                          ...documentFields, document: e.target.files && e.target.files[0]
+                          ...documentFields,
+                          document: e.target.files && e.target.files[0]
                         })}
                       />
                     </Button>
-                    <Typography variant='body1' sx={{ mt: 3 }}>{selectedFile?.name}</Typography>
+                    <Typography variant='body1' sx={{ mt: 3 }}>{documentFields?.document?.name}</Typography>
                   </Box>
                 </Box>
               </Modal>
@@ -173,25 +190,26 @@ function useDocuments() {
     }
   }
 
-  async function addDocument({
-    title,
-    description,
-    document,
-  }: DocumentRequestProps) {
+  async function addDocument(
+    {
+      title,
+      description,
+      document,
+    }: DocumentRequestProps,
+  ) {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
-    formData.append('document', document);
+    if (document) {
+      formData.append('document', document);
+    }
 
     try {
       setStatus('loading');
-
       await api.post(
         '/documents',
         formData,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        }
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
       await getData();
       setStatus('done');

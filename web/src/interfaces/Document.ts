@@ -8,5 +8,5 @@ export interface DocumentProps {
 export interface DocumentRequestProps {
   title: string;
   description: string;
-  document: string;
+  document: File | null;
 }
